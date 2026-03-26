@@ -9,6 +9,7 @@ export function Button({
   const variants = {
     primary: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-200/50",
     secondary: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 shadow-emerald-100/50",
+    terracotta: "bg-brand-terracotta text-white hover:bg-brand-earth shadow-amber-900/20",
     outline: "border-2 border-emerald-600/30 bg-transparent text-emerald-700 hover:border-emerald-600 hover:bg-emerald-50",
     ghost: "bg-transparent text-emerald-700 hover:bg-emerald-50",
   };
