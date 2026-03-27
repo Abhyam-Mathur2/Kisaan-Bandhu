@@ -10,9 +10,14 @@ import {
   ChevronDown,
 } from "lucide-react";
 import FarmHeroIllustration from "../components/FarmHeroIllustration";
+import { useLanguage } from "../context/LanguageContext";
 
 export function LandingPage() {
-  const tagline = "A smart farming companion that thinks for you. AI-powered crop recommendations, disease detection, and climate insights.";
+  const { t } = useLanguage();
+  const tagline = t(
+    "landingTagline",
+    "A smart farming companion that thinks for you. AI-powered crop recommendations, disease detection, and climate insights."
+  );
 
   return (
     <div className="flex flex-col items-center text-center max-w-6xl mx-auto pt-10">
@@ -28,7 +33,7 @@ export function LandingPage() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-sm font-bold mb-8 border border-amber-200 shadow-sm"
           >
             <Sparkles size={16} />
-            <span>Next-Gen Farming Assistant</span>
+            <span>{t("nextGenAssistant", "Next-Gen Farming Assistant")}</span>
           </motion.div>
 
           <motion.h1
@@ -63,13 +68,13 @@ export function LandingPage() {
           >
             <Link to="/login">
               <Button size="lg" className="h-16 px-10 text-xl group bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-200/50">
-                Launch Dashboard
+                {t("launchDashboard", "Launch Dashboard")}
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link to="/signup">
               <Button variant="outline" size="lg" className="h-16 px-10 text-xl border-emerald-600/20 text-emerald-700 hover:bg-emerald-50">
-                Join Community
+                {t("joinCommunity", "Join Community")}
               </Button>
             </Link>
           </motion.div>
@@ -99,22 +104,22 @@ export function LandingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-20">
         <FeatureItem 
           icon={Sprout} 
-          title="Smart Recs" 
-          desc="AI analyzed soil & climate" 
+          title={t("smartRecs", "Smart Recs")} 
+          desc={t("smartRecsDesc", "AI analyzed soil and climate")} 
           accent="bg-amber-100 text-amber-700"
           delay={1.5} 
         />
         <FeatureItem 
           icon={ShieldCheck} 
-          title="Health Guard" 
-          desc="Instant crop disease detection" 
+          title={t("healthGuard", "Health Guard")} 
+          desc={t("healthGuardDesc", "Instant crop disease detection")} 
           accent="bg-terracotta-100 text-brand-terracotta"
           delay={1.6} 
         />
         <FeatureItem 
           icon={Zap} 
-          title="Real-time" 
-          desc="Live market & weather data" 
+          title={t("realtime", "Real-time")} 
+          desc={t("realtimeDesc", "Live market and weather data")} 
           accent="bg-sky-100 text-sky-700"
           delay={1.7} 
         />

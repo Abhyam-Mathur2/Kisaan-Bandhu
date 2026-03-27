@@ -1,30 +1,71 @@
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Sprout, 
   Bug, 
   CloudRain, 
+  CloudSun,
+  BellRing,
+  PiggyBank,
   TrendingUp, 
   Settings, 
   LogOut, 
-  Bell, 
   UserCircle 
 } from "lucide-react";
 import { cn } from "../utils/cn";
 import AnimatedBackground from "../components/AnimatedBackground";
-
-const sidebarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: Sprout, label: "Crop Recommendation", path: "/dashboard/crop" },
-  { icon: Bug, label: "Disease Detection", path: "/dashboard/disease" },
-  { icon: CloudRain, label: "Climate Risk", path: "/dashboard/climate" },
-  { icon: TrendingUp, label: "Market Insights", path: "/dashboard/market" },
-  { icon: Settings, label: "Settings", path: "/dashboard/settings" },
-];
+import AlertSystem from "../components/AlertSystem";
+import VoiceButton from "../components/VoiceButton";
+import LanguageToggle from "../components/LanguageToggle";
+import OfflineBanner from "../components/OfflineBanner";
+import { getStoredAlerts } from "../data/alertsService";
+import { useLanguage } from "../context/LanguageContext";
 
 export function DashboardLayout() {
   const location = useLocation();
+  const { t } = useLanguage();
+  const [alerts, setAlerts] = useState(() => getStoredAlerts());
+
+  const sidebarItems = useMemo(
+    () => [
+      { icon: LayoutDashboard, label: t("dashboardTitle", "Dashboard"), path: "/dashboard" },
+      { icon: Sprout, label: t("cropRecommendation", "Crop Recommendation"), path: "/dashboard/crop" },
+      { icon: Bug, label: t("diseaseDetection", "Disease Detection"), path: "/dashboard/disease" },
+      { icon: CloudRain, label: t("climateRisk", "Climate Risk"), path: "/dashboard/climate" },
+      { icon: CloudSun, label: t("weather", "Weather"), path: "/dashboard/weather" },
+      { icon: BellRing, label: t("alerts", "Alerts"), path: "/dashboard/alerts", showsUnread: true },
+      { icon: PiggyBank, label: t("finance", "Finance"), path: "/dashboard/finance" },
+      { icon: TrendingUp, label: t("marketInsights", "Market Insights"), path: "/dashboard/market" },
+      { icon: Settings, label: t("settings", "Settings"), path: "/dashboard/settings" },
+    ],
+    [t]
+  );
+
+  useEffect(() => {
+    function handleAlertsUpdated(event) {
+      setAlerts(Array.isArray(event.detail) ? event.detail : getStoredAlerts());
+    }
+
+    function handleStorage(event) {
+      if (event.key === "kb:alerts:list") {
+        setAlerts(getStoredAlerts());
+      }
+    }
+
+    window.addEventListener("kb:alerts-updated", handleAlertsUpdated);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("kb:alerts-updated", handleAlertsUpdated);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  const unreadCount = useMemo(
+    () => alerts.filter((item) => !item.read).length,
+    [alerts]
+  );
 
   return (
     <div className="flex h-screen bg-[#F8FAF9] overflow-hidden relative">
@@ -49,14 +90,24 @@ export function DashboardLayout() {
                 key={item.label}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 group/nav",
+                  "flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 group/nav",
                   isActive 
                     ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" 
                     : "text-emerald-100/60 hover:text-white hover:bg-white/5 hover:translate-x-1"
                 )}
               >
-                <item.icon size={20} className={cn("transition-transform", !isActive && "group-hover/nav:scale-110")} />
-                {item.label}
+                <span className="flex items-center gap-3">
+                  <item.icon size={20} className={cn("transition-transform", !isActive && "group-hover/nav:scale-110")} />
+                  {item.label}
+                </span>
+                {item.showsUnread && unreadCount > 0 ? (
+                  <span className={cn(
+                    "rounded-full px-2 py-0.5 text-[10px] font-black",
+                    isActive ? "bg-white text-amber-600" : "bg-red-500 text-white"
+                  )}>
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                ) : null}
               </Link>
             );
           })}
@@ -65,7 +116,7 @@ export function DashboardLayout() {
         <div className="mt-auto pt-6 border-t border-white/10">
           <button className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-sm font-semibold text-red-300 hover:bg-red-500/10 transition-all duration-300">
             <LogOut size={20} />
-            Logout
+            {t("logout", "Logout")}
           </button>
         </div>
       </aside>
@@ -75,19 +126,18 @@ export function DashboardLayout() {
         <AnimatedBackground variant="dashboard" />
         
         {/* Top Header */}
-        <header className="h-20 bg-white/50 backdrop-blur-md border-b border-emerald-100/30 flex items-center justify-between px-10 flex-shrink-0 z-10">
+        <header className="h-20 bg-white/50 backdrop-blur-md border-b border-emerald-100/30 flex items-center justify-between px-4 sm:px-6 lg:px-10 flex-shrink-0 z-10">
           <div>
             <h1 className="text-xl font-bold text-slate-800 font-display">
               {sidebarItems.find(item => item.path === location.pathname)?.label || "Dashboard"}
             </h1>
           </div>
 
-          <div className="flex items-center gap-6">
-            <button className="relative p-2 text-slate-400 hover:text-emerald-600 transition-colors">
-              <Bell size={22} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full border-2 border-white" />
-            </button>
-            <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full border border-emerald-50 shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+            <LanguageToggle compact />
+            <VoiceButton text="You are on the Kisan Bandhu dashboard." />
+            <AlertSystem unreadCount={unreadCount} />
+            <div className="hidden sm:flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full border border-emerald-50 shadow-sm">
               <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
                 <UserCircle size={28} />
               </div>
@@ -99,8 +149,10 @@ export function DashboardLayout() {
           </div>
         </header>
 
+        <OfflineBanner />
+
         {/* Dynamic Content */}
-        <section className="flex-1 overflow-y-auto p-10 scroll-smooth z-10">
+        <section className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 scroll-smooth z-10">
           <Outlet />
         </section>
       </main>

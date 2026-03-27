@@ -4,9 +4,11 @@ import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Input } from "../components/Input";
+import { useLanguage } from "../context/LanguageContext";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -20,25 +22,25 @@ export function LoginPage() {
         className="self-start flex items-center gap-2 text-emerald-700 font-bold mb-10 hover:translate-x-[-4px] transition-transform"
       >
         <ArrowLeft size={20} />
-        Back to Home
+        {t("backToHome", "Back to Home")}
       </Link>
 
       <Card className="w-full max-w-md p-10 glass border-none">
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-black text-emerald-950 mb-3 tracking-tight">Welcome Back</h1>
-          <p className="text-emerald-900/50 font-medium">Continue your smart farming journey</p>
+          <h1 className="text-4xl font-black text-emerald-950 mb-3 tracking-tight">{t("welcomeBack", "Welcome Back")}</h1>
+          <p className="text-emerald-900/50 font-medium">{t("continueJourney", "Continue your smart farming journey")}</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <Input 
-            label="Email Address" 
+            label={t("emailAddress", "Email Address")} 
             type="email" 
             placeholder="farmer@kisan.com"
             icon={Mail}
             required
           />
           <Input 
-            label="Password" 
+            label={t("password", "Password")} 
             type="password" 
             placeholder="••••••••"
             icon={Lock}
@@ -47,19 +49,19 @@ export function LoginPage() {
           
           <div className="flex justify-end">
             <button type="button" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
-              Forgot Password?
+              {t("forgotPassword", "Forgot Password?")}
             </button>
           </div>
 
           <Button type="submit" size="lg" className="w-full h-14">
-            Sign In
+            {t("signIn", "Sign In")}
           </Button>
         </form>
 
         <p className="text-center mt-10 text-emerald-900/50 font-medium">
-          Don't have an account?{" "}
+          {t("noAccount", "Don't have an account?")} {" "}
           <Link to="/signup" className="text-emerald-600 font-bold hover:underline">
-            Create Account
+            {t("createAccount", "Create Account")}
           </Link>
         </p>
       </Card>

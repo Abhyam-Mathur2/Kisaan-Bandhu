@@ -2,8 +2,12 @@ import { motion } from "framer-motion";
 import { Link, Outlet } from "react-router-dom";
 import { Sprout } from "lucide-react";
 import AnimatedBackground from "../components/AnimatedBackground";
+import LanguageToggle from "../components/LanguageToggle";
+import { useLanguage } from "../context/LanguageContext";
 
 export function LandingLayout() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-amber-50/30 via-emerald-50 to-teal-100">
       <AnimatedBackground variant="landing" />
@@ -18,12 +22,17 @@ export function LandingLayout() {
             Kisan <span className="text-emerald-600">Bandhu</span>
           </span>
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-emerald-800/70">
-          <Link to="/" className="hover:text-emerald-900 transition-colors">Home</Link>
-          <Link to="#" className="hover:text-emerald-900 transition-colors">Features</Link>
-          <Link to="/login" className="px-5 py-2 hover:bg-amber-100/50 rounded-xl transition-all">Login</Link>
-          <Link to="/signup" className="px-5 py-2 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all">Get Started</Link>
+        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-emerald-800/70">
+          <Link to="/" className="hover:text-emerald-900 transition-colors">{t("navHome", "Home")}</Link>
+          <Link to="#" className="hover:text-emerald-900 transition-colors">{t("navFeatures", "Features")}</Link>
+          <LanguageToggle compact />
+          <Link to="/login" className="px-5 py-2 hover:bg-amber-100/50 rounded-xl transition-all">{t("navLogin", "Login")}</Link>
+          <Link to="/signup" className="px-5 py-2 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all">{t("navGetStarted", "Get Started")}</Link>
         </nav>
+
+        <div className="md:hidden">
+          <LanguageToggle compact />
+        </div>
       </header>
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
