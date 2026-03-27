@@ -6,6 +6,7 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Input } from "../components/Input";
 import { useLanguage } from "../context/LanguageContext";
+import { STORAGE_KEYS } from "../data/storageKeys";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ export function LoginPage() {
     }
 
     console.log("[Auth] Login attempt", { phone });
+    localStorage.setItem(STORAGE_KEYS.authSession, "active");
     navigate("/dashboard");
   };
 

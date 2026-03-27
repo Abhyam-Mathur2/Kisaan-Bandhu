@@ -140,7 +140,7 @@ export function DashboardPage() {
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <motion.div variants={item}>
-              <Card className="flex flex-col gap-4 p-8 glass-dark bg-white border-emerald-50 overflow-hidden relative group">
+              <Card className="flex flex-col gap-4 p-8 bg-white border border-emerald-100 shadow-lg shadow-emerald-900/5 overflow-hidden relative group">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-emerald-100 text-emerald-700">
                   <Leaf size={24} />
                 </div>
@@ -235,7 +235,7 @@ export function DashboardPage() {
 function StatCard({ icon: Icon, title, value, trend, color, data = [] }) {
   return (
     <motion.div variants={item}>
-      <Card className="flex flex-col gap-4 p-8 glass-dark bg-white border-emerald-50 group overflow-hidden">
+      <Card className="flex flex-col gap-4 p-8 bg-white border border-emerald-100 shadow-lg shadow-emerald-900/5 group overflow-hidden">
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${color}`}>
           <Icon size={24} />
         </div>

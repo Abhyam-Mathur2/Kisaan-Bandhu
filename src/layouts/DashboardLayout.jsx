@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Sprout, 
   Bug, 
+  Mic,
   CloudRain, 
   CloudSun,
   BellRing,
@@ -11,7 +12,11 @@ import {
   TrendingUp, 
   Settings, 
   LogOut, 
-  UserCircle 
+  UserCircle,
+  Bot,
+  ChevronRight,
+  MessageSquare,
+  Sparkles
 } from "lucide-react";
 import { cn } from "../utils/cn";
 import AnimatedBackground from "../components/AnimatedBackground";
@@ -19,17 +24,27 @@ import AlertSystem from "../components/AlertSystem";
 import VoiceButton from "../components/VoiceButton";
 import LanguageToggle from "../components/LanguageToggle";
 import OfflineBanner from "../components/OfflineBanner";
+import BandhuAssistant from "../components/BandhuAssistant";
 import { getStoredAlerts } from "../data/alertsService";
+import { STORAGE_KEYS } from "../data/storageKeys";
 import { useLanguage } from "../context/LanguageContext";
 
 export function DashboardLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const [alerts, setAlerts] = useState(() => getStoredAlerts());
+  const [isBandhuOpen, setIsBandhuOpen] = useState(false);
+
+  function handleLogout() {
+    localStorage.removeItem(STORAGE_KEYS.authSession);
+    navigate("/login", { replace: true });
+  }
 
   const sidebarItems = useMemo(
     () => [
       { icon: LayoutDashboard, label: t("dashboardTitle", "Dashboard"), path: "/dashboard" },
+      { icon: Mic, label: "Voice Assistant", path: "/dashboard/voice" },
       { icon: Sprout, label: t("cropRecommendation", "Crop Recommendation"), path: "/dashboard/crop" },
       { icon: Bug, label: t("diseaseDetection", "Disease Detection"), path: "/dashboard/disease" },
       { icon: CloudRain, label: t("climateRisk", "Climate Risk"), path: "/dashboard/climate" },
@@ -46,43 +61,28 @@ export function DashboardLayout() {
     function handleAlertsUpdated(event) {
       setAlerts(Array.isArray(event.detail) ? event.detail : getStoredAlerts());
     }
-
-    function handleStorage(event) {
-      if (event.key === "kb:alerts:list") {
-        setAlerts(getStoredAlerts());
-      }
-    }
-
     window.addEventListener("kb:alerts-updated", handleAlertsUpdated);
-    window.addEventListener("storage", handleStorage);
-
-    return () => {
-      window.removeEventListener("kb:alerts-updated", handleAlertsUpdated);
-      window.removeEventListener("storage", handleStorage);
-    };
+    return () => window.removeEventListener("kb:alerts-updated", handleAlertsUpdated);
   }, []);
 
-  const unreadCount = useMemo(
-    () => alerts.filter((item) => !item.read).length,
-    [alerts]
-  );
+  const unreadCount = useMemo(() => alerts.filter((item) => !item.read).length, [alerts]);
 
   return (
-    <div className="flex h-screen bg-[#F8FAF9] overflow-hidden relative">
+    <div className="flex h-screen bg-[#F8FAF9] overflow-hidden relative font-sans">
       <div className="absolute inset-0 grain opacity-[0.03] z-0 pointer-events-none" />
       
-      {/* Sidebar */}
-      <aside className="w-72 bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-950 flex flex-col p-6 h-full shadow-2xl z-10">
+      {/* Left Sidebar (Navigation) */}
+      <aside className="w-64 bg-emerald-950 flex flex-col p-6 h-full shadow-2xl z-20 border-r border-emerald-900/50">
         <Link to="/" className="flex items-center gap-2 mb-10 px-2 group">
           <div className="bg-amber-500 p-2 rounded-xl shadow-lg shadow-amber-500/20">
             <Sprout className="text-white" size={24} />
           </div>
-          <span className="text-xl font-bold text-white tracking-tight font-display">
+          <span className="text-xl font-bold text-white tracking-tight">
             Kisan <span className="text-amber-400">Bandhu</span>
           </span>
         </Link>
 
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 space-y-1.5">
           {sidebarItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -90,60 +90,49 @@ export function DashboardLayout() {
                 key={item.label}
                 to={item.path}
                 className={cn(
-                  "flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 group/nav",
+                  "flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200",
                   isActive 
-                    ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" 
-                    : "text-emerald-100/60 hover:text-white hover:bg-white/5 hover:translate-x-1"
+                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/20" 
+                    : "text-emerald-100/50 hover:text-white hover:bg-white/5"
                 )}
               >
                 <span className="flex items-center gap-3">
-                  <item.icon size={20} className={cn("transition-transform", !isActive && "group-hover/nav:scale-110")} />
+                  <item.icon size={18} />
                   {item.label}
                 </span>
-                {item.showsUnread && unreadCount > 0 ? (
-                  <span className={cn(
-                    "rounded-full px-2 py-0.5 text-[10px] font-black",
-                    isActive ? "bg-white text-amber-600" : "bg-red-500 text-white"
-                  )}>
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </span>
-                ) : null}
               </Link>
             );
           })}
         </nav>
 
         <div className="mt-auto pt-6 border-t border-white/10">
-          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-sm font-semibold text-red-300 hover:bg-red-500/10 transition-all duration-300">
-            <LogOut size={20} />
-            {t("logout", "Logout")}
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 transition-all">
+            <LogOut size={18} />
+            Logout
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-white">
         <AnimatedBackground variant="dashboard" />
         
         {/* Top Header */}
-        <header className="h-20 bg-white/50 backdrop-blur-md border-b border-emerald-100/30 flex items-center justify-between px-4 sm:px-6 lg:px-10 flex-shrink-0 z-10">
-          <div>
-            <h1 className="text-xl font-bold text-slate-800 font-display">
-              {sidebarItems.find(item => item.path === location.pathname)?.label || "Dashboard"}
-            </h1>
-          </div>
+        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-emerald-50 flex items-center justify-between px-8 flex-shrink-0 z-10">
+          <h1 className="text-lg font-black text-slate-800 uppercase tracking-tight">
+            {sidebarItems.find(item => item.path === location.pathname)?.label || "Dashboard"}
+          </h1>
 
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+          <div className="flex items-center gap-4">
             <LanguageToggle compact />
-            <VoiceButton text="You are on the Kisan Bandhu dashboard." />
             <AlertSystem unreadCount={unreadCount} />
-            <div className="hidden sm:flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full border border-emerald-50 shadow-sm">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
-                <UserCircle size={28} />
+            <div className="flex items-center gap-3 pl-4 border-l border-emerald-100">
+               <div className="flex flex-col items-end">
+                <span className="text-xs font-bold text-slate-800">Farmer John</span>
+                <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Premium User</span>
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 leading-none">Farmer John</span>
-                <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Premium Plan</span>
+              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 border-2 border-white shadow-sm">
+                <UserCircle size={22} />
               </div>
             </div>
           </div>
@@ -151,11 +140,86 @@ export function DashboardLayout() {
 
         <OfflineBanner />
 
-        {/* Dynamic Content */}
-        <section className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 scroll-smooth z-10">
+        <section className="flex-1 overflow-y-auto p-8 scroll-smooth z-10">
           <Outlet />
         </section>
       </main>
+
+      {/* Right Sidebar (Bandhu AI Quick Access) */}
+      <aside className="w-72 bg-white border-l border-emerald-50 flex flex-col z-20 shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.05)]">
+        <div className="p-6 border-b border-emerald-50">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest">Assistant</h2>
+            <Sparkles size={16} className="text-amber-500" />
+          </div>
+
+          {/* Bandhu Status Card */}
+          <div className="bg-gradient-to-br from-emerald-800 to-emerald-950 rounded-3xl p-5 text-white shadow-xl relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <Bot size={80} />
+             </div>
+             <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300">Bandhu Online</span>
+                </div>
+                <h3 className="text-xl font-bold mb-1">Bandhu</h3>
+                <p className="text-[11px] text-emerald-100/70 leading-relaxed mb-4">
+                  Your calm and composed companion for resilient farming.
+                </p>
+                <button 
+                  onClick={() => navigate("/dashboard/voice")}
+                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-emerald-950 rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+                >
+                  <Mic size={16} />
+                  VOICE ASSISTANT
+                </button>
+             </div>
+          </div>
+        </div>
+
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+          <div>
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Quick Insights</h4>
+            <div className="space-y-3">
+              {[
+                { label: "Crop Health", value: "Excellent", color: "text-emerald-600" },
+                { label: "Weather Risk", value: "Low", color: "text-amber-600" },
+                { label: "Next Action", value: "Irrigation in 2d", color: "text-slate-600" }
+              ].map((stat, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100/50">
+                  <span className="text-[11px] font-bold text-slate-500">{stat.label}</span>
+                  <span className={cn("text-[11px] font-black", stat.color)}>{stat.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4">
+             <div className="bg-amber-50 rounded-3xl p-4 border border-amber-100">
+                <p className="text-[10px] text-amber-800 font-bold leading-relaxed">
+                  "Bandhu suggests checking your Wheat field tomorrow morning due to rising humidity."
+                </p>
+             </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-emerald-50 mt-auto">
+           <button 
+             onClick={() => navigate("/dashboard/voice")}
+             className="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2 border border-emerald-100"
+           >
+             <Mic size={16} />
+             VOICE MODE
+           </button>
+        </div>
+      </aside>
+
+      {/* Floating Chat UI */}
+      <BandhuAssistant 
+        isOpen={isBandhuOpen} 
+        onClose={() => setIsBandhuOpen(false)} 
+      />
     </div>
   );
 }
