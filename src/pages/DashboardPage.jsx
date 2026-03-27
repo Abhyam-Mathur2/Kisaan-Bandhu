@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useCallback } from "react";
 import { 
   Sprout, 
   Bug, 
@@ -13,6 +14,10 @@ import {
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { cn } from "../utils/cn";
+import { useCachedResource } from "../hooks/useCachedResource";
+import { fetchWeather } from "../data/weatherService";
+import { STORAGE_KEYS } from "../data/storageKeys";
+import { useUserCoordinates } from "../hooks/useUserCoordinates";
 
 const container = {
   hidden: { opacity: 0 },
@@ -30,6 +35,14 @@ const item = {
 };
 
 export function DashboardPage() {
+  const coords = useUserCoordinates();
+  const weatherFetcher = useCallback(() => fetchWeather(coords.lat, coords.lon), [coords.lat, coords.lon]);
+  const { data: weather } = useCachedResource({
+    storageKey: STORAGE_KEYS.weather,
+    fetcher: weatherFetcher,
+    staleAfterMinutes: 20,
+  });
+
   return (
     <div className="space-y-10 pb-20">
       {/* Welcome Banner */}
@@ -42,7 +55,12 @@ export function DashboardPage() {
           <div className="text-center lg:text-left flex-1">
             <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight font-display">Hello Farmer John! 👋</h2>
             <p className="text-emerald-50/70 font-medium text-lg max-w-xl">
-              The weather today is perfect for sowing <span className="text-amber-400 font-bold underline decoration-amber-400/30 underline-offset-8">Wheat</span>. Soil moisture is at an optimal 62%.
+              {weather?.description
+                ? `Current weather: ${weather.description}.`
+                : "Fetching live weather for your area."} {" "}
+              {typeof weather?.humidity === "number"
+                ? `Humidity is ${weather.humidity}%.`
+                : "Humidity data will appear shortly."}
             </p>
           </div>
           
@@ -88,17 +106,21 @@ export function DashboardPage() {
           <div className="flex items-center gap-6 bg-white/5 p-6 rounded-[2rem] backdrop-blur-md border border-white/10">
             <div className="flex flex-col items-center">
               <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300/60 mb-1">Temp</span>
-              <span className="text-3xl font-black">24°C</span>
+              <span className="text-3xl font-black">
+                {typeof weather?.temperature === "number" ? `${weather.temperature}°C` : "--"}
+              </span>
             </div>
             <div className="w-px h-12 bg-white/10" />
             <div className="flex flex-col items-center">
               <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300/60 mb-1">Humidity</span>
-              <span className="text-3xl font-black">62%</span>
+              <span className="text-3xl font-black">
+                {typeof weather?.humidity === "number" ? `${weather.humidity}%` : "--"}
+              </span>
             </div>
             <div className="w-px h-12 bg-white/10" />
             <div className="flex items-center gap-2 text-emerald-300">
               <MapPin size={20} />
-              <span className="text-sm font-bold">Punjab, IN</span>
+              <span className="text-sm font-bold">{weather?.location || "Locating..."}</span>
             </div>
           </div>
         </div>
@@ -199,10 +221,10 @@ export function DashboardPage() {
           <StatCard 
             icon={CloudRain} 
             title="Rain Risk" 
-            value="12%" 
-            trend="Low" 
+            value={`${weather?.precipitationChance ?? 0}%`} 
+            trend={(weather?.precipitationChance ?? 0) >= 70 ? "High" : (weather?.precipitationChance ?? 0) >= 40 ? "Moderate" : "Low"} 
             color="bg-sky-100 text-sky-700"
-            data={[10, 15, 8, 20, 12, 12]}
+            data={(weather?.rainPrediction?.hourlyChances?.length ? weather.rainPrediction.hourlyChances : [10, 15, 8, 20, 12, 12]).map((x) => Math.max(5, x))}
           />
         </div>
       </div>

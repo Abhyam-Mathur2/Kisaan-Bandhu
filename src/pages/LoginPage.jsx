@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, ArrowLeft } from "lucide-react";
+import { Phone, Lock, ArrowLeft } from "lucide-react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { Input } from "../components/Input";
@@ -9,9 +10,29 @@ import { useLanguage } from "../context/LanguageContext";
 export function LoginPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const validatePhone = (value) => {
+    return /^[0-9]{10}$/.test(value);
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!phone || !password) {
+      setError("Phone and password are required.");
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      setError("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    console.log("[Auth] Login attempt", { phone });
     navigate("/dashboard");
   };
 
@@ -32,26 +53,30 @@ export function LoginPage() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <Input 
-            label={t("emailAddress", "Email Address")} 
-            type="email" 
-            placeholder="farmer@kisan.com"
-            icon={Mail}
-            required
-          />
+          <div>
+            <Input 
+              label={t("phoneNumber", "Phone Number")} 
+              type="tel" 
+              placeholder="9876543210"
+              icon={Phone}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              maxLength="10"
+              required
+            />
+            <p className="text-[10px] text-emerald-600/60 ml-1 mt-1">Enter 10-digit mobile number</p>
+          </div>
           <Input 
             label={t("password", "Password")} 
             type="password" 
             placeholder="••••••••"
             icon={Lock}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           
-          <div className="flex justify-end">
-            <button type="button" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
-              {t("forgotPassword", "Forgot Password?")}
-            </button>
-          </div>
+          {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
 
           <Button type="submit" size="lg" className="w-full h-14">
             {t("signIn", "Sign In")}

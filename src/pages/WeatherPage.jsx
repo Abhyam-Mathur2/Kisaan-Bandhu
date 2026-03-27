@@ -7,10 +7,12 @@ import { Skeleton } from "../components/Skeleton";
 import { STORAGE_KEYS } from "../data/storageKeys";
 import { fetchWeather } from "../data/weatherService";
 import { useCachedResource } from "../hooks/useCachedResource";
+import { useUserCoordinates } from "../hooks/useUserCoordinates";
 
 export function WeatherPage() {
   const reduceMotion = useReducedMotion();
-  const weatherFetcher = useCallback(() => fetchWeather(30.9, 75.85), []);
+  const coords = useUserCoordinates();
+  const weatherFetcher = useCallback(() => fetchWeather(coords.lat, coords.lon), [coords.lat, coords.lon]);
 
   const {
     data,
@@ -31,7 +33,7 @@ export function WeatherPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-black text-emerald-950">Weather Snapshot</h2>
-          <p className="text-sm text-emerald-900/70">Open-Meteo live fetch with cached fallback.</p>
+          <p className="text-sm text-emerald-900/70">OpenWeather live fetch with cached fallback.</p>
         </div>
         <Button variant="secondary" size="sm" onClick={retry}>
           <RefreshCw size={16} />
@@ -65,6 +67,18 @@ export function WeatherPage() {
               <Metric title="Temperature" value={`${data.temperature} C`} />
               <Metric title="Wind Speed" value={`${data.windSpeed} km/h`} />
               <Metric title="Rain Chance" value={`${data.precipitationChance}%`} />
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-sky-700">Rain Prediction (24h)</p>
+              <p className="mt-1 text-sm font-semibold text-slate-700">
+                Chance: {data.rainPrediction?.chance24h ?? data.precipitationChance}% | Expected Rain: {data.rainPrediction?.expectedRainMm24h ?? 0} mm
+              </p>
+              <p className="mt-1 text-sm text-slate-600">
+                {data.rainPrediction?.likelyStartLocal
+                  ? `Likely to begin around ${data.rainPrediction.likelyStartLocal}`
+                  : "No strong rain signal in the next 24 hours."}
+              </p>
             </div>
 
             {error ? <p className="mt-4 text-sm font-medium text-amber-700">{error}</p> : null}
