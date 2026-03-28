@@ -11,6 +11,7 @@ import { ClimatePage } from "./pages/ClimatePage";
 import { WeatherPage } from "./pages/WeatherPage";
 import { AlertsPage } from "./pages/AlertsPage";
 import { FinancePage } from "./pages/FinancePage";
+import DiseasePage from "./pages/DiseasePage";
 import { AnimatePresence } from "framer-motion";
 import { LanguageProvider } from "./context/LanguageContext";
 import { STORAGE_KEYS } from "./data/storageKeys";
@@ -45,7 +46,7 @@ function App() {
               <Route index element={<DashboardPage />} />
               <Route path="crop" element={<CropPage />} />
               <Route path="voice" element={<VoiceAssistantPage />} />
-              <Route path="disease" element={<DashboardPage />} />
+              <Route path="disease" element={<DiseasePage />} />
               <Route path="climate" element={<ClimatePage />} />
               <Route path="weather" element={<WeatherPage />} />
               <Route path="alerts" element={<AlertsPage />} />

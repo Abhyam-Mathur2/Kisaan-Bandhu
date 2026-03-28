@@ -6,3 +6,10 @@ pydantic
 python-multipart
 httpx
 groq
+torch
+torchvision
+numpy
+pillow
+opencv-python
+scikit-learn
+matplotlib
