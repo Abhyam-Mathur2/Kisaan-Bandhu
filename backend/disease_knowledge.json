@@ -1,0 +1,74 @@
+{
+  "Apple leaf": {
+    "disease_hindi": "सेब की पत्ती (स्वस्थ)",
+    "symptoms": "No visible signs of disease. Vibrant green leaves and firm stems.",
+    "prevention": "Continue regular watering, weeding, and balanced fertilization.",
+    "recommendation": "Monitor regularly for any changes. Maintain good soil health."
+  },
+  "Apple rust leaf": {
+    "disease_hindi": "सेब का जंग",
+    "symptoms": "Bright orange-yellow spots on leaves. Small tube-like structures on the underside of leaves.",
+    "prevention": "Remove nearby cedar trees if possible. Plant rust-resistant varieties.",
+    "recommendation": "Apply fungicides when orange galls appear on cedar trees in spring."
+  },
+  "Apple Scab Leaf": {
+    "disease_hindi": "सेब का स्कैब",
+    "symptoms": "Olive-green to brown spots on leaves and fruit. Spots can become dark and velvety.",
+    "prevention": "Remove fallen leaves in autumn. Prune trees to improve air circulation.",
+    "recommendation": "Apply sulfur or copper-based fungicides in early spring."
+  },
+  "Corn leaf blight": {
+    "disease_hindi": "मक्का का पत्ती झुलसा",
+    "symptoms": "Long, elliptical, grayish-green or tan lesions on leaves.",
+    "prevention": "Rotate with non-host crops. Use resistant hybrids.",
+    "recommendation": "Apply foliar fungicides if lesions appear before silking."
+  },
+  "Corn rust leaf": {
+    "disease_hindi": "मक्का का जंग",
+    "symptoms": "Small, brownish-red pustules on both upper and lower leaf surfaces.",
+    "prevention": "Use resistant hybrids. Rotate crops.",
+    "recommendation": "Fungicides are rarely needed unless infection is severe and occurs early."
+  },
+  "Potato leaf early blight": {
+    "disease_hindi": "आलू का अगेती झुलसा",
+    "symptoms": "Small, dark, papery spots on older leaves. Spots often have concentric rings (target-like).",
+    "prevention": "Rotate crops. Provide adequate nutrition (especially nitrogen).",
+    "recommendation": "Apply fungicides like chlorothalonil or mancozeb when first spots appear."
+  },
+  "Potato leaf late blight": {
+    "disease_hindi": "आलू का पछेती झुलसा",
+    "symptoms": "Dark, water-soaked patches on leaves that turn brown/black. White mold may appear under leaves.",
+    "prevention": "Use certified disease-free seed potatoes. Eliminate cull piles.",
+    "recommendation": "Immediate application of systemic fungicides. Remove and destroy infected plants."
+  },
+  "Tomato leaf": {
+    "disease_hindi": "टमाटर की पत्ती (स्वस्थ)",
+    "symptoms": "No visible signs of disease. Vibrant green leaves and firm stems.",
+    "prevention": "Continue regular watering and balanced fertilization.",
+    "recommendation": "Monitor regularly for any changes."
+  },
+  "Tomato Early blight leaf": {
+    "disease_hindi": "टमाटर का अगेती झुलसा",
+    "symptoms": "Brown spots with concentric rings on lower leaves. Yellowing around the spots.",
+    "prevention": "Stake plants for better airflow. Mulch around the base of plants.",
+    "recommendation": "Use fungicides like copper or chlorothalonil. Remove lower infected leaves."
+  },
+  "Tomato leaf late blight": {
+    "disease_hindi": "टमाटर का पछेती झुलसा",
+    "symptoms": "Large, dark brown, water-soaked patches on leaves and stems. Fruit develops firm, brown spots.",
+    "prevention": "Avoid planting near potatoes. Choose resistant varieties.",
+    "recommendation": "Apply fungicides immediately. Remove and destroy infected plants to prevent spread."
+  },
+  "Tomato leaf yellow virus": {
+    "disease_hindi": "टमाटर पीला पत्ती घुमाव वायरस",
+    "symptoms": "New leaves are small, yellow, and curled upward. Plant growth is severely stunted.",
+    "prevention": "Control whiteflies using reflective mulches or insecticidal soaps. Use resistant varieties.",
+    "recommendation": "Remove and destroy infected plants. There is no cure once infected."
+  },
+  "Tomato leaf bacterial spot": {
+    "disease_hindi": "टमाटर का जीवाणु धब्बा",
+    "symptoms": "Small, water-soaked, greasy spots on leaves and fruit. Spots turn dark brown.",
+    "prevention": "Use pathogen-free seeds and transplants. Avoid overhead irrigation.",
+    "recommendation": "Apply copper-based bactericides early in the season."
+  }
+}
