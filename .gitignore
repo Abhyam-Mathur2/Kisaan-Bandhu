@@ -35,3 +35,6 @@ venv/
 # Supabase
 supabase/.temp/
 supabase/.branches/
+
+# Data
+backend/data/
