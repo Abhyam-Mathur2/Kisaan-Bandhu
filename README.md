@@ -102,4 +102,4 @@ We welcome contributions! Please follow standard GitHub Flow:
 5. Open a Pull Request
 
 ## 📄 License
-This project was developed for the CSI Hackathon. All rights reserved.
+This project was developed for the CSI Build4Bharat Hackathon. All rights reserved.
