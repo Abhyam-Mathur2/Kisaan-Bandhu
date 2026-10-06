@@ -6,7 +6,7 @@
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
-  "https://qnmygtujnvlrcwblmqvd.supabase.co/functions/v1";
+  "https://dvppomddttreososgrhm.supabase.co/functions/v1";
 
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
 

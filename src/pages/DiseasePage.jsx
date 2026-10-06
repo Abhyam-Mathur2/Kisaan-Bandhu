@@ -18,6 +18,7 @@ import { cn } from '../utils/cn';
 import { useLanguage } from '../context/LanguageContext';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { edgePostForm } from '../utils/api';
 
 const DiseasePage = () => {
   const { t } = useLanguage();
@@ -52,17 +53,8 @@ const DiseasePage = () => {
     formData.append('image', selectedImage);
 
     try {
-      // Update this with your actual backend URL
-      const response = await fetch('http://localhost:8000/disease-detection/analyze', {
-        method: 'POST',
-        body: formData,
-      });
+      const data = await edgePostForm('disease-detection', formData);
 
-      if (!response.ok) {
-        throw new Error('Failed to analyze image');
-      }
-
-      const data = await response.json();
       setResult(data);
     } catch (err) {
       console.error(err);
