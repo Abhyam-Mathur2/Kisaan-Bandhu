@@ -1,21 +1,4 @@
-const WEATHER_FALLBACKS = [
-  {
-    location: "Punjab",
-    temperature: 27,
-    humidity: 56,
-    windSpeed: 10,
-    precipitationChance: 22,
-    description: "Partly cloudy with mild breeze",
-  },
-  {
-    location: "Haryana",
-    temperature: 29,
-    humidity: 49,
-    windSpeed: 14,
-    precipitationChance: 35,
-    description: "Warm afternoon with scattered clouds",
-  },
-];
+
 
 function randomDelay() {
   return 800 + Math.floor(Math.random() * 700);
@@ -82,20 +65,7 @@ export async function fetchWeather(lat = 30.90, lon = 75.85) {
   const baseUrl = import.meta.env.VITE_OPENWEATHER_BASE_URL || "https://api.openweathermap.org";
 
   if (!apiKey) {
-    console.log("[Weather] Missing VITE_OPENWEATHER_API_KEY, using mock fallback");
-    const fallback = WEATHER_FALLBACKS[Math.floor(Math.random() * WEATHER_FALLBACKS.length)];
-    return {
-      ...fallback,
-      description: `${fallback.description} (missing API key fallback)`,
-      rainPrediction: {
-        chance24h: fallback.precipitationChance,
-        expectedRainMm24h: 0,
-        likelyStartLocal: null,
-        hourlyChances: [fallback.precipitationChance],
-      },
-      fetchedAt: new Date().toISOString(),
-      isFallback: true,
-    };
+    throw new Error("Missing VITE_OPENWEATHER_API_KEY. Please provide a real API key.");
   }
 
   const currentUrl = `${baseUrl}/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
@@ -124,21 +94,7 @@ export async function fetchWeather(lat = 30.90, lon = 75.85) {
     console.log("[Weather] OpenWeather success", payload);
     return payload;
   } catch (error) {
-    console.log("[Weather] OpenWeather failed, using mock fallback", { message: error.message });
-    const fallback = WEATHER_FALLBACKS[Math.floor(Math.random() * WEATHER_FALLBACKS.length)];
-    const payload = {
-      ...fallback,
-      description: `${fallback.description} (mock fallback)`,
-      rainPrediction: {
-        chance24h: fallback.precipitationChance,
-        expectedRainMm24h: 0,
-        likelyStartLocal: null,
-        hourlyChances: [fallback.precipitationChance],
-      },
-      fetchedAt: new Date().toISOString(),
-      isFallback: true,
-    };
-    console.log("[MockAPI] Weather fallback response", payload);
-    return payload;
+    console.error("[Weather] OpenWeather API failed:", error.message);
+    throw error;
   }
 }
